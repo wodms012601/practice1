@@ -1,0 +1,530 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cafe24.iumium.common.dao.CommonCodeMapper">
+	
+	
+	
+	
+	
+	
+<!-- 공통코드 리스트 테이블 mapper -->
+
+
+	<!-- 팀 코드 테이블 -->
+	<select id="selectAllTeamCodes" resultType="com.cafe24.iumium.common.dto.TeamCode">
+        SELECT
+            t.team_code AS teamCode 
+            , t.record_id AS recordId
+            , t.agency_code AS agencyCode
+            , a.agency_name_korean AS agencyName
+            , t.org_code AS orgCode
+            , o.org_name_korean AS orgName
+            , t.dept_code AS deptCode
+            , d.dept_name_korean AS deptName
+            , t.team_name_korean AS teamNameKorean
+            , t.team_name_english AS teamNameEnglish
+            , t.team_establish_date AS teamEstablishDate
+            , t.team_sort_number AS teamSortNumber
+            , t.team_rep_phone_number AS teamRepPhoneNumber
+            , t.team_is_used AS teamIsUsed
+            , t.team_is_changed AS teamIsChanged
+            , t.team_reason_for_change AS teamReasonForChange
+            , t.team_changed_date AS teamChangedDate
+            , t.team_registered_date AS teamRegisteredDate
+        FROM haksa_team AS t
+        JOIN haksa_agency AS a
+        ON a.agency_code=t.agency_code
+        JOIN haksa_organization AS o
+        ON o.org_code=t.org_code
+        JOIN haksa_department AS d
+        ON d.dept_code=t.dept_code
+        ORDER BY team_sort_number ASC
+    </select>
+    
+    <!-- 부서 코드 테이블 -->
+	<select id="selectAllDepartmentCodes" resultType="com.cafe24.iumium.common.dto.DepartmentCode">
+        SELECT
+            d.dept_code AS deptCode 
+            , d.record_id AS recordId
+            , d.agency_code AS agencyCode
+            , a.agency_name_korean AS agencyName
+            , d.org_code AS orgCode
+            , o.org_name_korean AS orgName
+            , d.dept_for_edu_or_admin AS deptForEduOrAdmin
+            , d.dept_name_korean AS deptNameKorean
+            , d.dept_name_english AS deptNameEnglish
+            , d.dept_establish_date AS deptEstablishDate
+            , d.dept_sort_number AS deptSortNumber
+            , d.dept_rep_phone_number AS deptRepPhoneNumber
+            , d.dept_graduated_grade AS deptGraduatedGrade
+            , d.dept_is_used AS deptIsUsed
+            , d.dept_is_changed AS deptIsChanged
+            , d.dept_reason_for_change AS deptReasonForChange
+            , d.dept_changed_date AS deptChangedDate
+            , d.dept_registered_date AS deptRegisteredDate
+        FROM haksa_department AS d
+        JOIN haksa_agency AS a
+        ON a.agency_code=d.agency_code
+        JOIN haksa_organization AS o
+        ON o.org_code=d.org_code
+        ORDER BY dept_sort_number ASC
+    </select>
+    
+    <!-- 기구 코드 테이블 -->
+	<select id="selectAllOrganizationCodes" resultType="com.cafe24.iumium.common.dto.OrganizationCode">
+        SELECT
+            o.org_code AS orgCode 
+            , o.record_id AS recordId
+            , o.agency_code AS agencyCode
+            , a.agency_name_korean AS agencyName
+            , o.org_name_korean AS orgNameKorean
+            , o.org_name_english AS orgNameEnglish
+            , o.org_establish_date AS orgEstablishDate
+            , o.org_sort_number AS orgSortNumber
+            , o.org_is_used AS orgIsUsed
+            , o.org_is_changed AS orgIsChanged
+            , o.org_reason_for_change AS orgReasonForChange
+            , o.org_changed_date AS orgChangedDate
+            , o.org_registered_date AS orgRegisteredDate
+        FROM haksa_organization AS o
+        JOIN haksa_agency AS a
+        ON a.agency_code=o.agency_code
+        ORDER BY org_sort_number ASC
+    </select>
+    
+    <!-- 기관 코드 테이블 -->
+	<select id="selectAllAgencyCodes" resultType="com.cafe24.iumium.common.dto.AgencyCode">
+        SELECT
+            agency_code AS agencyCode 
+            , record_id AS recordId
+            , agency_name_korean AS agencyNameKorean
+            , agency_name_english AS agencyNameEnglish
+            , agency_establish_date AS agencyEstablishDate
+            , agency_sort_number AS agencySortNumber
+            , agency_is_used AS agencyIsUsed
+            , agency_is_changed AS agencyIsChanged
+            , agency_reason_for_change AS agencyReasonForChange
+            , agency_changed_date AS agencyChangedDate
+            , agency_registered_date AS agencyRegisteredDate
+        FROM haksa_agency
+        ORDER BY agency_sort_number ASC
+    </select>
+    
+    <!-- 직군 코드 테이블 -->
+	<select id="selectAllJobGroupCodes" resultType="com.cafe24.iumium.common.dto.JobGroupCode">
+		SELECT
+			job_group_code as jobGroupCode
+			, record_id as recordId
+			, job_group_name as jobGroupName
+			, job_group_is_used as jobGroupIsUsed
+			, job_group_is_changed as jobGroupIsChanged
+			, job_group_reason_for_change as jobGroupReasonForChange
+			, job_group_changed_date as jobGroupChangedDate
+			, job_group_registered_date as jobGroupRegisteredDate
+			
+		FROM haksa_job_group
+	</select>
+	
+	<!-- 직종 코드 테이블 -->
+	<select id="selectAllJobTypeCodes" resultType="com.cafe24.iumium.common.dto.JobTypeCode">
+		SELECT
+			job_type_code as jobTypeCode
+			, jt.record_id as recordId
+			, jt.job_group_code as jobGroupCode
+			, job_group_name as jobGroupName
+			, job_type_name as jobTypeName
+			, job_type_is_used as jobTypeIsUsed
+			, job_type_is_changed as jobTypeIsChanged
+			, job_type_reason_for_change as jobTypeReasonForChange
+			, job_type_changed_date as jobTypeChangedDate
+			, job_type_registered_date as jobTypeRegisteredDate
+			
+		FROM haksa_job_type jt
+		INNER JOIN haksa_job_group jg
+		ON jt.job_group_code = jg.job_group_code
+	</select>
+	
+	<!-- 직급 코드 테이블 -->
+	<select id="selectAllJobRankCodes" resultType="com.cafe24.iumium.common.dto.JobRankCode">
+		SELECT
+			job_rank_code as jobRankCode
+			, jr.job_type_code as jobTypeCode
+			, job_type_name as jobTypeName
+			, jt.job_group_code as jobGroupCode
+			, job_group_name as jobGroupName
+			, jr.record_id as recordId
+			, job_rank_name_korean as jobRankNameKorean
+			, job_rank_name_english as jobRankNameEnglish
+			, job_rank_min_promotion_required as jobRankMinPromotionRequired
+			, job_rank_is_used as jobRankIsUsed
+			, job_rank_is_changed as jobRankIsChanged
+			, job_rank_reason_for_change as jobRankReasonForChange
+			, job_rank_changed_date as jobRankChangedDate
+			, job_rank_registered_date as jobRankRegisteredDate
+			
+		FROM haksa_job_rank jr
+		INNER JOIN haksa_job_type jt
+		ON jr.job_type_code = jt.job_type_code
+		INNER JOIN haksa_job_group jg
+		ON jt.job_group_code = jg.job_group_code
+	</select>
+	
+	<!-- 직위 코드 테이블 -->
+	<select id="selectAllJobPositionCodes" resultType="com.cafe24.iumium.common.dto.JobPositionCode">
+		SELECT
+			job_position_code as jobPositionCode
+			, record_id as recordId
+			, job_position_name_korean as jobPositionNameKorean
+			, job_position_name_english as jobPositionNameEnglish
+			, job_position_sort_number as jobPositionSortNumber
+			, job_position_is_used as jobPositionIsUsed
+			, job_position_is_changed as jobPositionIsChanged
+			, job_position_reason_for_change as jobPositionReasonForChange
+			, job_position_changed_date as jobPositionChangedDate
+			, job_position_registered_date as jobPositionRegisteredDate
+		FROM haksa_job_position
+		ORDER BY job_position_sort_number ASC
+	</select>
+	
+	<!-- 건물 코드 테이블-->
+	<select id="selectAllBuildingCodes" resultType="com.cafe24.iumium.common.dto.BuildingCode">
+		SELECT
+			building_code as buildingCode
+			, b.record_id as recordId
+			, b.agency_code as agencyCode
+			, agency_name_korean as agencyNameKorean
+			, building_name as buildingName
+			, building_sort_number as buildingSortNumber
+			, building_is_used as buildingIsUsed
+			, building_is_changed as buildingIsChanged
+			, building_reason_for_change as buildingReasonForChange
+			, building_changed_date as buildingChangedDate
+			, building_registered_date as buildingRegisteredDate
+		FROM haksa_building b
+		INNER JOIN haksa_agency a
+		ON b.agency_code = a.agency_code
+		ORDER BY building_sort_number ASC
+	</select>
+    
+    <!-- 강의실 코드 테이블 -->
+	<select id="selectAllRoomCodes" resultType="com.cafe24.iumium.common.dto.RoomCode">
+		SELECT
+			room_code as roomCode
+			, r.record_id as recordId
+			, r.building_code as buildingCode
+			, building_name as buildingName
+			, room_number as roomNumber
+			, room_name as roomName
+			, room_floor as roomFloor
+			, room_usage as roomUsage
+			, room_is_used as roomIsUsed
+			, room_is_changed as roomIsChanged
+			, room_reason_for_change as roomReasonForChange
+			, room_changed_date as roomChangedDate
+			, room_registered_date as roomRegisteredDate
+		FROM haksa_room r
+		INNER JOIN haksa_building b
+		ON r.building_code = b.building_code
+	</select>
+	
+	<!-- 국가 코드 테이블 -->
+	<select id="selectAllCountryCodes" resultType="com.cafe24.iumium.common.dto.CountryCode">
+		SELECT
+			country_code as countryCode
+			, record_id as recordId
+			, country_name_korean as countryNameKorean
+			, country_is_used as countryIsUsed
+			, country_is_changed as countryIsChanged
+			, country_reason_for_change as countryReasonForChange
+			, country_changed_date as countryChangedDate
+			, country_registered_date as countryRegisteredDate
+		FROM haksa_country
+	</select>
+	
+	
+	
+	
+	
+	
+	
+	
+<!-- 공통코드 입력처리, selectBox 데이터 조회 테이블 mapper -->	
+
+
+    <!-- 부서 코드, 이름, 기관 코드 테이블 -->
+	<select id="addTeamCodeForm" resultType="com.cafe24.iumium.common.dto.TeamCode">
+        SELECT
+            dept_code AS deptCode, dept_name_korean AS deptName, org_code AS orgCode, agency_code AS agencyCode
+        FROM haksa_department
+    </select>
+	
+	<!-- 팀 코드 입력 테이블 -->
+	<insert id="addTeamCodeAction" parameterType="com.cafe24.iumium.common.dto.TeamCode">
+        INSERT INTO haksa_team(
+        	team_code
+       		, record_id
+       		, agency_code
+       		, org_code
+       		, dept_code
+       		, team_name_korean
+       		, team_name_english
+       		, team_establish_date
+       		, team_sort_number
+       		, team_rep_phone_number
+       		, team_registered_date
+        )VALUES(
+        	'${teamCode}'
+			, '${recordId}'
+			, '${agencyCode}'
+			, '${orgCode}'
+			, '${deptCode}'
+			, '${teamNameKorean}'
+			, '${teamNameEnglish}'
+			, '${teamEstablishDate}'
+			, ${teamSortNumber}
+			, '${teamRepPhoneNumber}'
+			, now()
+        )
+			
+    </insert>
+    
+    <!-- 부서 코드, 이름, 기관 코드 테이블 -->
+	<select id="selectAllOrgName" resultType="com.cafe24.iumium.common.dto.DepartmentCode">
+        SELECT
+            org_code AS orgCode, org_name_korean AS orgName, agency_code AS agencyCode
+        FROM haksa_organization
+    </select>
+	
+	<!-- 부서 코드 입력 테이블 -->
+	<insert id="addDeptCodeAction" parameterType="com.cafe24.iumium.common.dto.DepartmentCode">
+        INSERT INTO haksa_department(
+        	dept_code
+       		, record_id
+       		, agency_code
+       		, org_code
+       		, dept_for_edu_or_admin
+       		, dept_name_korean
+       		, dept_name_english
+       		, dept_establish_date
+       		, dept_sort_number
+       		, dept_rep_phone_number
+       		, dept_graduated_grade
+       		, dept_registered_date
+        )VALUES(
+        	'${deptCode}'
+			, '${recordId}'
+			, '${agencyCode}'
+			, '${orgCode}'
+			, '${deptForEduOrAdmin}'
+			, '${deptNameKorean}'
+			, '${deptNameEnglish}'
+			, '${deptEstablishDate}'
+			, ${deptSortNumber}
+			, '${deptRepPhoneNumber}'
+			, '${deptGraduatedGrade}'
+			, now()
+        )
+			
+    </insert>
+	
+    <!-- 기관 코드, 이름 테이블 -->
+	<select id="selectAllAgencyName" resultType="com.cafe24.iumium.common.dto.OrganizationCode">
+        SELECT
+			agency_code AS agencyCode, agency_name_korean AS agencyName
+		FROM haksa_agency            
+    </select>
+    
+    <!-- 기구 코드 입력 테이블 -->
+	<insert id="AddOrgCodeAction" parameterType="com.cafe24.iumium.common.dto.OrganizationCode">
+		INSERT INTO haksa_organization(
+			org_code
+			, record_id
+			, agency_code
+			, org_name_korean
+			, org_name_english
+			, org_establish_date
+			, org_sort_number
+			, org_registered_date
+		)VALUES(
+			'${orgCode}'
+			, '${recordId}'
+			, '${agencyCode}'
+			, '${orgNameKorean}'
+			, '${orgNameEnglish}'
+			, '${orgEstablishDate}'
+			, ${orgSortNumber}
+			, now()
+		)
+    </insert>
+	
+	<!-- 기관 코드 입력 테이블 -->
+	<insert id="AddAgencyCodes" parameterType="com.cafe24.iumium.common.dto.AgencyCode">
+		INSERT INTO haksa_agency(
+			agency_code
+			, record_id
+			, agency_name_korean
+			, agency_name_english
+			, agency_establish_date
+			, agency_sort_number
+			, agency_registered_date
+		)VALUES(
+			'${agencyCode}'
+			, '${recordId}'
+			, '${agencyNameKorean}'
+			, '${agencyNameEnglish}'
+			, '${agencyEstablishDate}'
+			, ${agencySortNumber}
+			, now()
+		)
+    </insert>
+    
+	<!-- 직군 코드 입력 테이블 -->
+	<select id="addJobGroupCodeAction" parameterType="com.cafe24.iumium.common.dto.JobGroupCode">
+		INSERT INTO haksa_job_group (
+			job_group_code
+			, record_id
+			, job_group_name
+			, job_group_registered_date
+		)VALUES(
+			'${jobGroupCode}'
+			, '${recordId}'
+			, '${jobGroupName}'
+			, now()
+		)
+	</select>
+	
+	<!-- 직군명, 코드 테이블 -->
+	<select id="addJobTypeCodesForm" resultType="com.cafe24.iumium.common.dto.JobTypeCode">
+		SELECT job_group_code AS jobGroupCode, job_group_name AS jobGroupName FROM haksa_job_group
+	</select>
+	
+	<!-- 직종 코드 입력 테이블 -->
+	<select id="addJobTypeCodesAction" parameterType="com.cafe24.iumium.common.dto.JobTypeCode">
+		INSERT INTO haksa_job_type (
+			job_type_code
+			, record_id
+			, job_group_code
+			, job_type_name
+			, job_type_registered_date
+		)VALUES(
+			'${jobTypeCode}'
+			, '${recordId}'
+			, '${jobGroupCode}'
+			, '${jobTypeName}'
+			, now()
+		)
+	</select>
+	
+	<!-- 직종 코드, 직종명, 직군 코드 테이블 -->
+	<select id="addJobRankCodesForm" resultType="com.cafe24.iumium.common.dto.JobRankCode">
+		SELECT job_group_code AS jobGroupCode, job_type_code AS jobTypeCode, job_type_name AS jobTypeName FROM haksa_job_type
+	</select>
+	
+	<!-- 직급 코드 입력 테이블 -->
+	<select id="addJobRankCodesAction" parameterType="com.cafe24.iumium.common.dto.JobRankCode">
+		INSERT INTO haksa_job_rank (
+			job_rank_code
+			, job_type_code
+			, record_id
+			, job_rank_name_korean
+			, job_rank_name_english
+			, job_rank_min_promotion_required
+			, job_rank_registered_date
+		)VALUES(
+			'${jobRankCode}'
+			, '${jobTypeCode}'
+			, '${recordId}'
+			, '${jobRankNameKorean}'
+			, '${jobRankNameEnglish}'
+			, ${jobRankMinPromotionRequired}
+			, now()
+		)
+	</select>
+	
+	<!-- 직위 코드 입력 테이블 -->
+	<insert id="addJobPositionCodesAction" parameterType="com.cafe24.iumium.common.dto.JobPositionCode">
+		INSERT INTO haksa_job_position(
+			job_position_code
+			, record_id
+			, job_position_name_korean
+			, job_position_name_english
+			, job_position_sort_number
+			, job_position_registered_date
+		)VALUES(
+			'${jobPositionCode}'
+			, '${recordId}'
+			, '${jobPositionNameKorean}'
+			, '${jobPositionNameEnglish}'
+			, ${jobPositionSortNumber}
+			, now()
+		)
+	</insert>
+	
+	<!-- 건물 코드 입력 폼 select box 기관코드 테이블-->
+	<select id="addBuildingCodesForm" resultType="com.cafe24.iumium.common.dto.BuildingCode">
+		SELECT agency_code AS agencyCode, agency_name_korean AS agencyNameKorean FROM haksa_agency 
+	</select>
+	
+	<!-- 건물 코드 입력 테이블-->
+	<select id="addBuildingCodesAction" parameterType="com.cafe24.iumium.common.dto.BuildingCode">
+		INSERT INTO haksa_building(
+			building_code
+			, record_id
+			, agency_code
+			, building_name
+			, building_sort_number
+			, building_registered_date
+		)VALUES(
+			'${buildingCode}'
+			, '${recordId}'
+			, '${agencyCode}'
+			, '${buildingName}'
+			, ${buildingSortNumber}
+			, now()
+		)
+	</select>
+	
+	<!-- 강의실 코드 입력 테이블 -->
+	<insert id="addRoomCodesAction" parameterType="com.cafe24.iumium.common.dto.RoomCode">
+		INSERT INTO haksa_room(
+			room_code
+			, record_id
+			, building_code
+			, room_number
+			, room_name
+			, room_floor
+			, room_usage
+			, room_registered_date
+		)VALUES(
+			'${roomCode}'
+			, '${recordId}'
+			, '${buildingCode}'
+			, ${roomNumber}
+			, '${roomName}'
+			, ${roomFloor}
+			, '${roomUsage}'
+			, now()
+		)
+	</insert>
+	
+	<!-- 강의실 코드 입력 폼 select box 건물 코드 테이블 -->
+	<select id="addRoomCodesForm" resultType="com.cafe24.iumium.common.dto.RoomCode">
+		SELECT building_code AS buildingCode, building_name AS buildingName FROM haksa_building
+	</select>
+	
+	<!-- 국가 코드 입력 테이블 -->
+	<insert id="addCountryCodesAction" parameterType="com.cafe24.iumium.common.dto.CountryCode">
+		INSERT INTO haksa_country(
+			country_code
+			, record_id
+			, country_name_korean
+			, country_registered_date
+		)VALUES(
+			'${countryCode}'
+			, '${recordId}'
+			, '${countryNameKorean}'
+			, now()
+		)
+	</insert>
+	
+</mapper>

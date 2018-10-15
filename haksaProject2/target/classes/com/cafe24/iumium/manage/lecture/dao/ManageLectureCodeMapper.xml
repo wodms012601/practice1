@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="com.cafe24.iumium.manage.lecture.dao.ManageLectureCodeMapper">
+
+
+
+<!-- 수업관리 코드 리스트 테이블 mapper -->
+
+
+	<!-- 이수구분 코드 테이블 -->
+    <select id="selectManageLectureTocList" 
+    		resultType="com.cafe24.iumium.manage.lecture.dto.TypeOfCompletionCode">
+        SELECT
+            type_of_completion_code AS typeOfCompletionCode 
+            , record_id AS recordId
+            , type_of_completion_name AS typeOfCompletionName
+            , type_of_completion_is_used AS typeOfCompletionIsUsed
+            , type_of_completion_is_changed AS typeOfCompletionIsChanged
+            , type_of_completion_reason_for_change AS typeOfCompletionReasonForChange
+            , type_of_completion_changed_date AS typeOfCompletionChangedDate
+            , type_of_completion_registered_date AS typeOfCompletionRegisteredDate  
+        FROM haksa_type_of_completion
+    </select>
+    
+    <!-- 과목 코드 테이블 -->
+    <select id="selectManageLectureSubjectList" 
+    		resultType="com.cafe24.iumium.manage.lecture.dto.SubjectCode">
+    	SELECT
+            subject_code AS subjectCode 
+            , record_id AS recordId
+            , subject_name_korean AS subjectNameKorean
+            , subject_name_english AS subjectNameEnglish
+            , subject_score_graduation AS subjectScoreGraduation
+            , subject_hours_theory AS subjectHoursTheory
+            , subject_hours_practice AS subjectHoursPractice
+            , subject_hours_is_used AS subjectHoursIsUsed
+            , subject_hours_is_changed AS subjectHoursIsChanged
+            , subject_hours_reason_for_change AS subjectHoursReasonForChange
+            , subject_hours_changed_date AS subjectHoursChangedDate
+            , subject_hours_registered_date AS subjectHoursRegisteredDate  
+        FROM haksa_subject
+    </select>
+    
+    <!-- 강의평가 항목 코드 테이블 -->
+    <select id="selectManageLectureQfelList" 
+    		resultType="com.cafe24.iumium.manage.lecture.dto.QuestionForEvaluateLectureCode">
+    	SELECT
+            question_for_evaluate_code AS questionForEvaluateCode 
+            , record_id AS recordId
+            , semester_code AS semesterCode
+            , question_for_evaluate_type AS questionForEvaluateType
+            , question_for_evaluate_name AS questionForEvaluateName
+            , question_for_evaluate_is_used AS questionForEvaluateIsUsed
+            , question_for_evaluate_is_changed AS questionForEvaluateIsChanged
+            , question_for_evaluate_reason_for_change AS questionForEvaluateReasonForChange
+            , question_for_evaluate_changed_date AS questionForEvaluateChangedDate
+            , question_for_evaluate_registered_date AS questionforEvaluateRegisteredDate
+        FROM haksa_question_for_evaluate_lecture
+    </select>
+    
+    <!-- 강의별 평가항목 배정 코드 테이블 -->
+    <select id="selectManageLectureAfeList" 
+    		resultType="com.cafe24.iumium.manage.lecture.dto.AssignmentForEvaluateCode">
+    	SELECT
+            assignment_for_evaluate_number AS assignmentForEvaluateNumber 
+            , record_id AS recordId
+            , lecture_status_number AS lectureStatusNumber
+            , question_for_evaluate_code AS questionForEvaluateCode
+            , assignment_for_evaluate_registered_date AS assignmentForEvaluateRegisteredDate
+        FROM haksa_assignment_for_evaluate
+    </select>
+    
+    <!-- 성적평가 기준 코드 테이블 -->
+    <select id="selectManageLectureGccList" 
+    		resultType="com.cafe24.iumium.manage.lecture.dto.GradingCriteriaCode">
+    	SELECT
+            grading_criteria_rating AS gradingCriteriaRating 
+            , record_id AS recordId
+            , grading_criteria_start_of_section AS gradingCriteriaStartOfSection
+            , grading_criteria_end_of_section AS gradingCriteriaEndOfSection
+            , grading_criteria_grade AS gradingCriteriaGrade
+        FROM haksa_grading_criteria
+    </select>
+    
+    
+    
+<!-- 수업관리 코드 입력처리 테이블 mapper -->
+
+
+	<!-- 이수구분 코드 입력 테이블 -->
+    <insert id="addTocAction" 
+    		parameterType="com.cafe24.iumium.manage.lecture.dto.TypeOfCompletionCode">
+        INSERT INTO haksa_type_of_completion(
+        	type_of_completion_code
+        	, record_id
+        	, type_of_completion_name
+        	, type_of_completion_registered_date
+        )VALUES(
+        	'${typeOfCompletionCode}'
+        	, '${recordId}'
+        	, '${typeOfCompletionName}'
+        	, now()
+        )
+    </insert>
+    
+    <!-- 수업 코드 입력 테이블 -->
+    <insert id="addSubjectCodeAction" 
+    		parameterType="com.cafe24.iumium.manage.lecture.dto.SubjectCode">
+        INSERT INTO haksa_subject(
+        	subject_code
+        	, record_id
+        	, subject_name_korean
+        	, subject_name_english
+        	, subject_score_graduation
+        	, subject_hours_theory
+        	, subject_hours_practice
+        	, subject_hours_registered_date
+        )VALUES(
+        	'${subjectCode}'
+        	, '${recordId}'
+        	, '${subjectNameKorean}'
+        	, '${subjectNameEnglish}'
+        	, ${subjectScoreGraduation}
+        	, ${subjectHoursTheory}
+        	, ${subjectHoursPractice}
+        	, now()
+        )
+    </insert>
+    
+    <!-- 강의평가 항목 코드 selectBox 학기 코드 조회 테이블 -->
+    <select id="addQuestionForEvaluateLectureCodeForm" 
+    		resultType="com.cafe24.iumium.manage.lecture.dto.QuestionForEvaluateLectureCode">
+    	SELECT
+    		semester_code AS semesterCode
+        FROM haksa_semester
+    </select>
+    
+    <!-- 강의 평가 항목 코드 입력 테이블 -->
+    <insert id="addQuestionForEvaluateLectureCodeAction" 
+    		parameterType="com.cafe24.iumium.manage.lecture.dto.QuestionForEvaluateLectureCode">
+        INSERT INTO haksa_question_for_evaluate_lecture(
+        	question_for_evaluate_code
+        	, record_id
+        	, semester_code
+        	, question_for_evaluate_type
+        	, question_for_evaluate_name
+        	, question_for_evaluate_registered_date
+        )VALUES(
+        	'${questionForEvaluateCode}'
+        	, '${recordId}'
+        	, '${semesterCode}'
+        	, '${questionForEvaluateType}'
+        	, '${questionForEvaluateName}'
+        	, now()
+        )
+    </insert>
+    
+    <!-- 성적평가 기준 코드 입력 테이블 -->
+    <insert id="addGradingCriteriaCodeAction" 
+    		parameterType="com.cafe24.iumium.manage.lecture.dto.GradingCriteriaCode">
+        INSERT INTO haksa_grading_criteria(
+        	grading_criteria_rating
+        	, record_id
+        	, grading_criteria_start_of_section
+        	, grading_criteria_end_of_section
+        	, grading_criteria_grade
+        )VALUES(
+        	'${gradingCriteriaRating}'
+        	, '${recordId}'
+        	, ${gradingCriteriaStartOfSection}
+        	, ${gradingCriteriaEndOfSection}
+        	, ${gradingCriteriaGrade}
+        )
+    </insert>
+</mapper>

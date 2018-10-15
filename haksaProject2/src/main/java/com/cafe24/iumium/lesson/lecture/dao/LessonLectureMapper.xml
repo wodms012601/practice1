@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cafe24.iumium.lesson.lecture.dao.LessonLectureMapper">
+
+	<!-- 학과별 반 테이블 -->
+	<select id="selectAllClassesByDepartment" resultType="com.cafe24.iumium.lesson.lecture.dto.ClassByDepartment">
+		SELECT
+			class_by_department_number as classByDepartmentNumber
+			, cbd.record_id as recordId
+			, cbd.dept_code as deptCode
+			, dept_name_korean as deptNameKorean
+			, cbd.appointment_school_personnel_number as appointmentSchoolPersonnelNumber
+			, human_name as humanName
+			, semester_code as semesterCode
+			, class_by_department_grade as classByDepartmentGrade
+			, class_by_department_class as classByDepartmentClass
+			, class_by_department_day_and_night as classByDepartmentDayAndNight
+			, class_by_department_curriculum_division as classByDepartmentCurriculumDivision
+			, class_by_department_registered_date as classByDepartmentRegisteredDate
+			
+		FROM haksa_class_by_department cbd
+		INNER JOIN haksa_department d
+		ON cbd.dept_code = d.dept_code
+		INNER JOIN ilban_human h
+		ON cbd.appointment_school_personnel_number = h.student_teacher_no
+	</select>
+	
+	<!-- 강의 상황서 테이블 -->
+	<select id="selectAllLectureStatus" resultType="com.cafe24.iumium.lesson.lecture.dto.LectureStatus">
+		select
+			l.lecture_status_number AS lectureStatusNumber
+			, l.record_id AS recordId
+			, l.subject_code AS subjectCode
+			, s.subject_name_korean AS subjectName
+			, s.subject_score_graduation AS subjectScoreGraduation
+			, s.subject_hours_theory AS subjectHoursTheory
+			, s.subject_hours_practice AS subjectHoursPractice
+			, l.type_of_completion_code AS typeOfCompletionCode
+			, t.type_of_completion_name AS typeOfCompletionName
+			, l.class_by_department_number AS classByDepartmentNumber
+			, c.dept_name_korean AS deptName
+			, c.class_by_department_grade AS classByDepartmentGrade
+			, l.room_code AS roomCode 
+			, r.room_name AS roomName
+			, l.appointment_school_personnel_number AS appointmentSchoolPersonnelNumber
+			, h.human_name AS humanName
+			, l.semester_code AS semesterCode
+			, l.lecture_status_limit_number AS lectureStatusLimitNumber
+			, l.lecture_status_registered_date AS lectureStatusRegisteredDate
+		FROM haksa_lecture_status AS l
+		JOIN haksa_subject AS s
+		ON s.subject_code=l.subject_code
+		JOIN haksa_type_of_completion AS t
+		ON t.type_of_completion_code=l.type_of_completion_code
+		JOIN (select dept.dept_name_korean, class.class_by_department_grade, class.class_by_department_number FROM haksa_class_by_department AS class JOIN haksa_department AS dept ON dept.dept_code=class.dept_code) AS c
+		ON c.class_by_department_number=l.class_by_department_number
+		JOIN haksa_room AS r
+		ON r.room_code=l.room_code
+		JOIN (select code.appointment_school_personnel_number, name.human_name FROM ilban_appointment AS code JOIN ilban_human AS name ON name.student_teacher_no=code.appointment_school_personnel_number) AS h
+		ON h.appointment_school_personnel_number=l.appointment_school_personnel_number;
+	</select>
+	
+	<!-- 강의담당 상황교수 변경 테이블 -->
+	<select id="selectAllProfessorChange" resultType="com.cafe24.iumium.lesson.lecture.dto.ProfessorChange">
+		select
+			p.professor_change_number AS professorChangeNumber
+			, p.lecture_status_number AS lectureStatusNumber
+			, l.subject_name_korean AS subjectName
+			, l.type_of_completion_name AS typeOfCompletionName
+			, l.subject_score_graduation AS subjectScoreGraduation
+			, l.subject_hours_theory AS subjectHoursTheory
+			, l.subject_hours_practice AS subjectHoursPractice
+			, l.human_name AS humanName
+			, p.appointment_school_personnel_number AS appointmentSchoolPersonnelNumber
+			, h.human_name AS professorChangeName
+			, p.professor_change_reason_for_change AS professorChangeReasonForChange
+			, p.professor_change_changed_date AS professorChangeChangedDate
+		FROM haksa_professor_change AS p
+		JOIN (select le.lecture_status_number
+				, s.subject_name_korean
+				, t.type_of_completion_name
+				, s.subject_score_graduation
+				, s.subject_hours_theory
+				, s.subject_hours_practice
+				, n.human_name 
+			FROM haksa_lecture_status AS le
+			JOIN haksa_subject AS s
+			ON s.subject_code=le.subject_code
+			JOIN haksa_type_of_completion AS t
+			ON t.type_of_completion_code=le.type_of_completion_code
+			JOIN (select led.appointment_school_personnel_number, hn.human_name FROM haksa_lecture_status AS led JOIN ilban_human AS hn ON led.appointment_school_personnel_number=hn.student_teacher_no) AS n
+			ON n.appointment_school_personnel_number=le.appointment_school_personnel_number) AS l
+		ON l.lecture_status_number=p.lecture_status_number
+		JOIN (select p.appointment_school_personnel_number, name.human_name FROM haksa_professor_change AS p JOIN ilban_human AS name ON name.student_teacher_no=p.appointment_school_personnel_number) AS h
+		ON h.appointment_school_personnel_number=p.appointment_school_personnel_number
+	</select>
+	
+	<!-- 이수구분 변경 테이블 -->
+	<select id="selectAllChangedTypeOfCompletion" resultType="com.cafe24.iumium.lesson.lecture.dto.ChangedTypeOfCompletion">
+		select
+			c.changed_type_of_completion_number AS changedTypeOfCompletionNumber
+			, c.lecture_status_number AS lectureStatusNumber
+			, s.subject_name_korean AS subjectName
+			, c.changed_type_of_completion_name_before AS changedTypeOfCompletionNameBefore
+			, c.changed_type_of_completion_name_after AS changedTypeOfCompletionNameAfter
+			, c.changed_type_of_completion_reason_for_change AS changedTypeOfCompletionReasonForChange
+			, c.changed_type_of_completion_changed_date AS changedTypeOfCompletionChangedDate
+		FROM haksa_changed_type_of_completion AS c
+		JOIN (SELECT 
+				su.subject_name_korean
+				, l.lecture_status_number 
+			FROM haksa_lecture_status AS l
+			JOIN haksa_subject AS su
+			ON su.subject_code=l.subject_code
+			) AS s
+		ON s.lecture_status_number=c.lecture_status_number
+	</select>
+	
+</mapper>

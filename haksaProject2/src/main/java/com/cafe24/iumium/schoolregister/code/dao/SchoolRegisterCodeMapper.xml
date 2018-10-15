@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cafe24.iumium.schoolregister.code.dao.SchoolRegisterCodeMapper">
+
+	<!-- 학기코드 테이블 -->
+	<select id="selectAllSemesterCodes" resultType="com.cafe24.iumium.schoolregister.code.dto.SemesterCode">
+		SELECT
+			semester_code as semesterCode
+			, record_id as recordId
+			, semester_begin_date as semesterBeginDate
+			, semester_end_date as semesterEndDate
+			, semester_is_used as semesterIsUsed
+			, semester_is_changed as semesterIsChanged
+			, semester_reason_for_change as semesterReasonForChange
+			, semester_changed_date as semesterChangedDate
+			, semester_registered_date as semesterRegisteredDate
+			
+		FROM haksa_semester
+		ORDER BY semester_registered_date DESC;
+	</select>
+	
+	<!-- 학기별 상세일정 테이블 -->
+	<select id="selectAllCalanders" resultType="com.cafe24.iumium.schoolregister.code.dto.Calander">
+		SELECT
+			calander_number as calanderNumber
+			, record_id as recordId
+			, semester_code as semesterCode
+			, calander_begin_date as calanderBeginDate
+			, calander_end_date as calanderEndDate
+			, calander_title as calanderTitle
+			, calander_content as calanderContent
+			, calander_registered_date as calanderRegisteredDate
+		
+		FROM haksa_calander	
+	</select>
+	
+	<!-- 학적변동사유 코드 테이블-->
+	<select id="selectAllReasonsForChangeSchoolRegister" resultType="com.cafe24.iumium.schoolregister.code.dto.ReasonForChangeSchoolRegister">
+		SELECT
+			reason_for_change_code as reasonForChangeCode
+			, record_id as recordId
+			, reason_for_change_korean as reasonForChangeKorean
+			, reason_for_change_english as reasonForChangeEnglish
+			, reason_for_change_is_used as reasonForChangeIsUsed
+			, reason_for_change_is_changed as reasonForChangeIsChanged
+			, reason_for_change_reason_for_change as reasonForChangeReasonForChange
+			, reason_for_change_changed_date as reasonForChangeChangedDate
+			, reason_for_change_registered_date as reasonForChangeRegisteredDate
+		
+		FROM haksa_reason_for_change_school_register
+	</select>
+	
+	<!-- 상담구분 코드 테이블 -->
+	<select id="selectAllTypeOfCounselCodes" resultType="com.cafe24.iumium.schoolregister.code.dto.TypeOfCounselCode">
+		SELECT
+			counsel_type_code as counselTypeCode
+			, record_id as recordId
+			, counsel_type_name as counselTypeName
+			, counsel_type_is_used as counselTypeIsUsed
+			, counsel_type_is_changed as counselTypeIsChanged
+			, counsel_type_reason_for_change as counselTypeReasonForChange
+			, counsel_type_changed_date as counselTypeChangedDate
+			, counsel_type_registered_date as counselTypeRegisteredDate
+		
+		FROM haksa_type_of_counsel
+	</select>
+	
+	<!-- 상담결과 코드 테이블 -->
+	<select id="selectAllResultOfCounselCodes" resultType="com.cafe24.iumium.schoolregister.code.dto.ResultOfCounselCode">
+		SELECT
+			counsel_result_code as counselResultCode
+			, rc.record_id as recordId
+			, counsel_type_name as counselTypeName
+			, counsel_result_name as counselResultName
+			, counsel_result_is_used as counselResultIsUsed
+			, counsel_result_is_changed as counselResultIsChanged
+			, counsel_result_reason_for_change as counselResultReasonForChange
+			, counsel_result_changed_date as counselResultChangedDate
+			, counsel_result_registered_date as counselResultRegisteredDate
+		FROM haksa_result_of_counsel rc
+		INNER JOIN haksa_type_of_counsel tc
+	</select>
+</mapper>

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cafe24.iumium.courseandscore.dao.CourseAndScoreMapper">
+
+	<!-- 세션 학번 -> 학과별반번호 조회 -->
+	<select id="inquireStudentDept" parameterType="String" resultType="com.cafe24.iumium.courseandscore.dto.EnrolCourse">
+		SELECT 
+			class_by_department_number as classByDepartmentNumber
+			
+		FROM haksa_student_info 
+		WHERE student_number= #{id}
+	</select>
+	
+	<!-- 학생의 학과별반번호 -> 강의상황서 내용 조회 -->
+	<select id="inquireLectureStatus" parameterType="int" resultType="com.cafe24.iumium.courseandscore.dto.EnrolCourse">
+		SELECT 
+			haksa_lecture_status.lecture_status_number as lectureStatusNumber
+			,haksa_subject.subject_name_korean as enrolCourseCourseName
+			,haksa_department.dept_name_korean as enrolCourseDeptName
+			,haksa_type_of_completion.type_of_completion_name as enrolCourseCompletionDivision
+			,haksa_subject.subject_score_graduation as enrolCourseCourseCredit
+			,haksa_class_by_department.class_by_department_grade as enrolCourseSchoolYear
+			,haksa_class_by_department.class_by_department_class as enrolCourseClass
+			,ilban_human.human_name as enrolCourseProfName
+			,haksa_room.room_name as enrolCourseClassroom
+			,substring(haksa_semester.semester_code,1,4) as enrolCourseYear
+			,substring(haksa_semester.semester_code,6,1) as enrolCourseSemester
+			,haksa_lecture_status.lecture_status_limit_number
+			,haksa_lecture_status.lecture_status_limit_number as enrolCourseCourseRetakeNumber
+			
+			
+		FROM haksa_lecture_status
+		
+		INNER JOIN 
+			haksa_subject 
+			,haksa_type_of_completion 
+			,haksa_class_by_department 
+			,haksa_room, haksa_semester
+			,haksa_department
+			,ilban_human
+		
+		WHERE haksa_lecture_status.class_by_department_number = #{lectureStatusNumber}
+		
+		and (haksa_subject.subject_code = haksa_lecture_status.subject_code) 
+		and (haksa_type_of_completion.type_of_completion_code = haksa_lecture_status.type_of_completion_code)
+		and (haksa_class_by_department.class_by_department_number = haksa_lecture_status.class_by_department_number)
+		and (haksa_room.room_code = haksa_lecture_status.room_code)
+		and (haksa_semester.semester_code = haksa_lecture_status.semester_code)
+		and (haksa_department.dept_code = haksa_class_by_department.dept_code)
+		and (ilban_human.student_teacher_no = haksa_lecture_status.appointment_school_personnel_number)
+		
+	</select>
+	
+	<!-- 학번이 일치하는 학생의 수강신청 테이블 내의 레코드 조회 -->
+	<select id="inquireSearchLectureById" parameterType="String" resultType="com.cafe24.iumium.courseandscore.dto.EnrolCourse">
+		SELECT 
+				enrol_course_no as enrolCourseNo
+				, enrol_course_course_name as enrolCourseCourseName
+				, enrol_course_completion_division as enrolCourseCompletionDivision
+				, enrol_course_course_credit as enrolCourseCourseCredit
+				, enrol_course_dept_name as enrolCourseDeptName
+				, enrol_course_school_year as enrolCourseSchoolYear
+				, enrol_course_class as enrolCourseClass
+				, enrol_course_prof_name as enrolCourseProfName
+				, enrol_course_classroom as enrolCourseClassroom
+				, enrol_course_year as enrolCourseYear
+				, enrol_course_semester as enrolCourseSemester
+	
+	FROM haksa_enrol_course
+	
+	WHERE enrol_course_student_number = #{id}
+	</select>
+</mapper>

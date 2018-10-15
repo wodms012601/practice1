@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cafe24.iumium.common.dao.UserMapper">
+
+	<!-- 로그인 체크 쿼리 -->
+	<select id="userLoginCheck" parameterType="com.cafe24.iumium.common.dto.UserLoginData" resultType="com.cafe24.iumium.common.dto.UserLoginData">
+		SELECT
+			record_id as userId
+			, level as userLevel
+		FROM
+			account_management
+		WHERE record_id = #{userId} AND password = #{userPw}
+	</select>
+</mapper>

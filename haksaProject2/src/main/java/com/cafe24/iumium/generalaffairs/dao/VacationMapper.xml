@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cafe24.iumium.generalaffairs.dao.VacationMapper">
+
+	<!-- 차량 신청 리스트 -->
+    <select id="selectVacationList"  resultType="com.cafe24.iumium.generalaffairs.dto.VacationDto">
+		SELECT ilban_vacation.vacation_division AS vacationDivision
+			,ilban_vacation.vacation_type AS vacationType
+			,ilban_vacation.vacation_start_date AS vacationStartDate
+			,ilban_vacation.vacation_end_date AS vacationEndDate
+			,ilban_vacation.vacation_actual_use AS vacationActualUse
+			,ilban_vacation.vacation_reason AS vacationReason
+			,ilban_vacation.vacation_approval_status AS vacationApprovalStatus
+			,ilban_vacation.vacation_registration_day AS vacationRegistrationDay
+			,haksa_department.dept_name_korean AS deptNameKorean
+			,haksa_job_rank.job_rank_name_korean AS jobRankNameKorean
+			,ilban_human.human_name AS humanName
+		FROM ilban_vacation INNER JOIN ilban_appointment
+			ON ilban_vacation.appointment_school_personnel_number = ilban_appointment.appointment_school_personnel_number
+		INNER JOIN ilban_human
+			ON ilban_vacation.appointment_school_personnel_number = ilban_human.student_teacher_no
+		INNER JOIN haksa_department
+			ON ilban_appointment.dept_code = haksa_department.dept_code
+		INNER JOIN haksa_job_rank
+			ON ilban_appointment.rank_code = haksa_job_rank.job_rank_code
+		ORDER BY ilban_vacation.vacation_registration_day DESC
+    </select>
+    
+</mapper>
