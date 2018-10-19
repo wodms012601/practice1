@@ -68,7 +68,10 @@
 				<i class="fas fa-fw fa-folder"></i> <span>시간표 관리</span>
 			</a>
 			<div class="dropdown-menu" aria-labelledby="pagesDropdown">
-				<a class="dropdown-item" href="/schoolregister/schedule">시간표 입력</a> 
+				<a class="dropdown-item" href="/lesson/schedule/addSchedule">시간표 입력</a>
+				<a class="dropdown-item" href="/lesson/schedule/listSchedule">시간표 검색</a>
+				<a class="dropdown-item" href="/lesson/schedule/listProfessorSchedule">교수시간표 검색</a>
+				<a class="dropdown-item" href="/lesson/schedule/listRoomSchedule">강의실시간표 검색</a>
 			</div>
 		</li>
 		<li class="nav-item dropdown">

@@ -4,6 +4,12 @@
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
  
 <mapper namespace="com.cafe24.iumium.lesson.schedule.dao.ScheduleMapper">
+
+	<!-- 교수명 검색 쿼리문 -->
+	<select id="getprofessorName" parameterType="String" resultType="java.lang.String">
+		select human_name as name from ilban_human where student_teacher_no=#{professorNumber}
+    </select>
+
 	<!-- 학과 검색 쿼리문 -->
 	<select id="getDepartmentList" parameterType="String" resultType="com.cafe24.iumium.lesson.lecture.dto.ClassByDepartment">
         select distinct d.dept_name_korean as deptNameKorean
@@ -27,34 +33,127 @@
         where class_by_department_grade=#{gradeCode}
     </select>
     
+    <!-- 강의실 검색 쿼리문 -->
+    <select id="getroomList" parameterType="String" resultType="com.cafe24.iumium.common.dto.RoomCode">
+        select room_floor as roomFloor, room_number as roomNumber, room_name as roomName, room_code as roomCode
+		from haksa_room where building_code=#{buildingCode}
+    </select>
+    
+    <!-- 과목, 강의실, 교수님이름 조회 쿼리문 -->
+    <select id="getLectureStatusList" parameterType="com.cafe24.iumium.lesson.schedule.dto.Search" resultType="com.cafe24.iumium.lesson.lecture.dto.LectureStatus">
+    	select haksa_subject.subject_name_korean as subjectName,
+    	haksa_room.room_floor as roomFloor,
+    	haksa_room.room_number as roomNumber,
+    	ilban_human.human_name as humanName,
+    	haksa_building.building_name as buildingName
+		from haksa_lecture_status JOIN haksa_subject ON haksa_lecture_status.subject_code=haksa_subject.subject_code
+		JOIN haksa_room ON haksa_lecture_status.room_code=haksa_room.room_code
+		JOIN ilban_human ON haksa_lecture_status.appointment_school_personnel_number=ilban_human.student_teacher_no
+		JOIN haksa_building ON haksa_room.building_code=haksa_building.building_code
+		where haksa_lecture_status.class_by_department_number=(select haksa_class_by_department.class_by_department_number
+		from haksa_class_by_department where haksa_class_by_department.semester_code=#{semesterCode}
+		and haksa_class_by_department.dept_code=(select haksa_department.dept_code from haksa_department where haksa_department.dept_name_korean=#{departmentCode}) 
+		and haksa_class_by_department.class_by_department_grade=#{gradeCode}
+		and haksa_class_by_department.class_by_department_class=#{classesCode}
+		and haksa_class_by_department.class_by_department_day_and_night=#{dayCode})
+    </select>
+    
+    
+    <!-- 시간표 조회 쿼리문 -->
+    <select id="getScheduleList" parameterType="com.cafe24.iumium.lesson.schedule.dto.Search" resultType="com.cafe24.iumium.lesson.schedule.dto.Schedule">
+    	select haksa_subject.subject_name_korean as subjectName,
+    	haksa_room.room_floor as roomFloor,
+    	haksa_room.room_number as roomNumber,
+    	ilban_human.human_name as humanName,
+    	haksa_building.building_name as buildingName,
+    	haksa_schedule.day as day,
+    	haksa_schedule.period as period
+		from haksa_lecture_status JOIN haksa_subject ON haksa_lecture_status.subject_code=haksa_subject.subject_code
+		JOIN haksa_room ON haksa_lecture_status.room_code=haksa_room.room_code
+		JOIN ilban_human ON haksa_lecture_status.appointment_school_personnel_number=ilban_human.student_teacher_no
+		JOIN haksa_building ON haksa_room.building_code=haksa_building.building_code
+		JOIN haksa_schedule ON haksa_schedule.lecture_status_number=haksa_lecture_status.lecture_status_number
+		where haksa_lecture_status.class_by_department_number=(select haksa_class_by_department.class_by_department_number
+		from haksa_class_by_department where haksa_class_by_department.semester_code=#{semesterCode}
+		and haksa_class_by_department.dept_code=(select haksa_department.dept_code from haksa_department where haksa_department.dept_name_korean=#{departmentCode}) 
+		and haksa_class_by_department.class_by_department_grade=#{gradeCode}
+		and haksa_class_by_department.class_by_department_class=#{classesCode}
+		and haksa_class_by_department.class_by_department_day_and_night=#{dayCode})
+    </select>
+    
+    <!-- 교수 시간표 쿼리문 -->
+    <select id="getProfessorScheduleList" parameterType="com.cafe24.iumium.lesson.lecture.dto.ClassByDepartment" resultType="com.cafe24.iumium.lesson.schedule.dto.Schedule">
+    	select haksa_subject.subject_name_korean as subjectName,
+		haksa_department.dept_name_korean as deptName,
+		haksa_building.building_name as buildingName,
+		haksa_room.room_floor as roomFloor,
+		haksa_room.room_number as roomNumber,
+		haksa_schedule.day as day,
+		haksa_schedule.period as period
+		
+		from haksa_lecture_status join haksa_subject on haksa_lecture_status.subject_code=haksa_subject.subject_code
+		join haksa_class_by_department on haksa_class_by_department.class_by_department_number=haksa_lecture_status.class_by_department_number
+		join haksa_department on haksa_department.dept_code=haksa_class_by_department.dept_code
+		join haksa_room on haksa_room.room_code=haksa_lecture_status.room_code
+		join haksa_building on haksa_building.building_code=haksa_room.building_code
+		join haksa_schedule on haksa_schedule.lecture_status_number=haksa_lecture_status.lecture_status_number
+		
+		where haksa_class_by_department.semester_code=#{semesterCode}
+		and haksa_lecture_status.appointment_school_personnel_number=#{appointmentSchoolPersonnelNumber}
+		and haksa_class_by_department.class_by_department_day_and_night=#{classByDepartmentDayAndNight}
+    </select>
+    
+    <!-- 강의실 시간표 쿼리문 -->
+    <select id="getRoomScheduleList" parameterType="com.cafe24.iumium.lesson.schedule.dto.Search" resultType="com.cafe24.iumium.lesson.schedule.dto.Schedule">
+    	select haksa_subject.subject_name_korean as subjectName,
+		ilban_human.human_name as humanName,
+		haksa_class_by_department.class_by_department_grade as departmentGrade,
+		haksa_class_by_department.class_by_department_class as departmentClass,
+		haksa_schedule.day as day,
+		haksa_schedule.period as period
+		
+		from haksa_lecture_status join haksa_subject on haksa_lecture_status.subject_code=haksa_subject.subject_code
+		join haksa_class_by_department on haksa_class_by_department.class_by_department_number=haksa_lecture_status.class_by_department_number
+		join haksa_schedule on haksa_schedule.lecture_status_number=haksa_lecture_status.lecture_status_number
+		join ilban_human on ilban_human.student_teacher_no=haksa_lecture_status.appointment_school_personnel_number
+		join haksa_room on haksa_room.room_code=haksa_lecture_status.room_code
+		join haksa_building on haksa_building.building_code=haksa_room.building_code
+		
+		where haksa_class_by_department.semester_code=#{semesterCode}
+		and haksa_building.building_code=#{buildingCode}
+		and haksa_room.room_code=#{roomCode}
+		and haksa_class_by_department.class_by_department_day_and_night=#{dayCode}
+    </select>
+    
     <!-- 학과별 반 검색 쿼리문 -->
-    <select id="getClassByDepartmentList" parameterType="com.cafe24.iumium.lesson.schedule.dto.Search" resultType="com.cafe24.iumium.lesson.lecture.dto.ClassByDepartment">
+    <!-- <select id="getClassByDepartmentList" parameterType="com.cafe24.iumium.lesson.schedule.dto.Search" resultType="com.cafe24.iumium.lesson.lecture.dto.ClassByDepartment">
         select class_by_department_number as classByDepartmentNumber
         from haksa_class_by_department 
         where semester_code=#{semesterCode}
         and dept_code=(select dept_code from haksa_department where dept_name_korean=#{departmentCode}) 
         and class_by_department_grade=#{gradeCode}
         and class_by_department_class=#{classesCode}
-    </select>
+        and class_by_department_day_and_night=#{dayCode}
+    </select> -->
     
     <!-- 강의상황서 검색 쿼리문 -->
-    <select id="getLectureStatusList" parameterType="com.cafe24.iumium.lesson.lecture.dto.ClassByDepartment" resultType="com.cafe24.iumium.lesson.lecture.dto.LectureStatus">
+    <!-- <select id="getLectureStatusList" parameterType="com.cafe24.iumium.lesson.lecture.dto.ClassByDepartment" resultType="com.cafe24.iumium.lesson.lecture.dto.LectureStatus">
         select lecture_status_number as lectureStatusNumber,
         subject_code as subjectCode, 
         room_code as roomCode, 
         appointment_school_personnel_number as appointmentSchoolPersonnelNumber
         from haksa_lecture_status 
         where class_by_department_number=#{classByDepartmentNumber}
-    </select>
+    </select> -->
     
 	<!-- 과목, 건물명, 층, 강의실, 교수님이름 검색 쿼리문 -->
-    <select id="getLectureStatusNameList" parameterType="com.cafe24.iumium.lesson.lecture.dto.LectureStatus" resultType="com.cafe24.iumium.lesson.lecture.dto.LectureStatus">
+    <!-- <select id="getLectureStatusNameList" parameterType="com.cafe24.iumium.lesson.lecture.dto.LectureStatus" resultType="com.cafe24.iumium.lesson.lecture.dto.LectureStatus">
         select subject_name_korean as subjectName, building_name as buildingName, room_floor as roomFloor, room_name as roomName, human_name as humanName
         from haksa_subject, haksa_building, haksa_room, ilban_human 
         where haksa_subject.subject_code=#{subjectCode} 
         and haksa_building.building_code=(select building_code from haksa_room where room_code=#{roomCode})
         and haksa_room.room_code=#{roomCode}
         and ilban_human.student_teacher_no=#{appointmentSchoolPersonnelNumber}
-    </select>
+    </select> -->
     
 </mapper>

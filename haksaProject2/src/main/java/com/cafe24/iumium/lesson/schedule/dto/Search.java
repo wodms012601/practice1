@@ -6,6 +6,10 @@ public class Search {
 	private String departmentCode;
 	private String gradeCode;
 	private String classesCode;
+	private String roomCode;
+	private String buildingCode;
+	private String dayCode;
+	private String professorNumber;
 	
 	public String getSemesterCode() {
 		return semesterCode;
@@ -30,5 +34,29 @@ public class Search {
 	}
 	public void setClassesCode(String classesCode) {
 		this.classesCode = classesCode;
+	}
+	public String getDayCode() {
+		return dayCode;
+	}
+	public void setDayCode(String dayCode) {
+		this.dayCode = dayCode;
+	}
+	public String getProfessorNumber() {
+		return professorNumber;
+	}
+	public void setProfessorNumber(String professorNumber) {
+		this.professorNumber = professorNumber;
+	}
+	public String getRoomCode() {
+		return roomCode;
+	}
+	public void setRoomCode(String roomCode) {
+		this.roomCode = roomCode;
+	}
+	public String getBuildingCode() {
+		return buildingCode;
+	}
+	public void setBuildingCode(String buildingCode) {
+		this.buildingCode = buildingCode;
 	}
 }
